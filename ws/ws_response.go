@@ -34,17 +34,31 @@ type Trade struct {
 	CrossSeq      int       `json:"cross_seq"`
 }
 
+// type KLine struct {
+// 	ID       int64   `json:"id"`        // 563
+// 	Symbol   string  `json:"symbol"`    // BTCUSD
+// 	OpenTime int64   `json:"open_time"` // 1539918000
+// 	Open     float64 `json:"open"`
+// 	High     float64 `json:"high"`
+// 	Low      float64 `json:"low"`
+// 	Close    float64 `json:"close"`
+// 	Volume   float64 `json:"volume"`
+// 	Turnover float64 `json:"turnover"` // 0.0013844
+// 	Interval string  `json:"interval"` // 1m
+// }
+
 type KLine struct {
-	ID       int64   `json:"id"`        // 563
-	Symbol   string  `json:"symbol"`    // BTCUSD
-	OpenTime int64   `json:"open_time"` // 1539918000
-	Open     float64 `json:"open"`
-	High     float64 `json:"high"`
-	Low      float64 `json:"low"`
-	Close    float64 `json:"close"`
-	Volume   float64 `json:"volume"`
-	Turnover float64 `json:"turnover"` // 0.0013844
-	Interval string  `json:"interval"` // 1m
+	Start     int64   `json:"start"`
+	End       int64   `json:"end"`
+	Open      float64 `json:"open"`
+	High      float64 `json:"high"`
+	Low       float64 `json:"low"`
+	Close     float64 `json:"close"`
+	Volume    string  `json:"volume"`
+	Turnover  string  `json:"turnover"` // 0.0013844
+	Confirm   bool    `json:"confirm"`  // 1m
+	CrossSeq  int     `json:"cross_seq"`
+	Timestamp int64   `json:"timestamp"`
 }
 
 type Insurance struct {

@@ -30,13 +30,13 @@ const (
 // wss://stream.bybit.com/realtime
 
 const (
-	HostReal    = "wss://stream.bybit.com/realtime"
-	HostTestnet = "wss://stream-testnet.bybit.com/realtime"
+	HostReal    = "wss://stream.bybit.com/realtime_public"
+	HostTestnet = "wss://stream-testnet.bybit.com/realtime_public"
 )
 
 const (
 	WSOrderBook25L1 = "orderBookL2_25" // 新版25档orderBook: order_book_25L1.BTCUSD
-	WSKLine         = "kline"          // K线: kline.BTCUSD.1m
+	WSKLine         = "candle"          // K线: kline.BTCUSD.1m
 	WSTrade         = "trade"          // 实时交易: trade/trade.BTCUSD
 	WSInsurance     = "insurance"      // 每日保险基金更新: insurance
 	WSInstrument    = "instrument"     // 产品最新行情: instrument
@@ -279,9 +279,9 @@ func (b *ByBitWS) processMessage(messageType int, data []byte) {
 			if len(topicArray) != 3 {
 				return
 			}
-			symbol := topicArray[1]
+			symbol := topicArray[2]
 			raw := ret.Get("data").Raw
-			var data KLine
+			var data []KLine
 			err := json.Unmarshal([]byte(raw), &data)
 			if err != nil {
 				log.Printf("%v", err)

@@ -28,7 +28,7 @@ func (b *ByBitWS) processTrade(symbol string, data ...*Trade) {
 	b.Emit(WSTrade, symbol, data)
 }
 
-func (b *ByBitWS) processKLine(symbol string, data KLine) {
+func (b *ByBitWS) processKLine(symbol string, data []KLine) {
 	b.Emit(WSKLine, symbol, data)
 }
 
