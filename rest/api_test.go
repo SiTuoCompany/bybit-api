@@ -1,10 +1,11 @@
 package rest
 
 import (
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // 开发电报群:
@@ -337,12 +338,12 @@ func TestByBit_SetLeverage(t *testing.T) {
 	b.SetLeverage(3, "BTCUSD")
 }
 
-func TestByBit_GetPositions(t *testing.T) {
-	b := newByBit()
-	positions, err := b.GetPositions()
-	assert.Nil(t, err)
-	t.Logf("%#v", positions)
-}
+// func TestByBit_GetPositions(t *testing.T) {
+// 	b := newByBit()
+// 	positions, err := b.GetPositions()
+// 	assert.Nil(t, err)
+// 	t.Logf("%#v", positions)
+// }
 
 func TestByBit_GetPosition(t *testing.T) {
 	b := newByBit()

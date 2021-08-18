@@ -7,14 +7,15 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/chuckpreslar/emission"
-	"github.com/gorilla/websocket"
-	"github.com/recws-org/recws"
-	"github.com/tidwall/gjson"
 	"log"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/chuckpreslar/emission"
+	"github.com/gorilla/websocket"
+	"github.com/recws-org/recws"
+	"github.com/tidwall/gjson"
 )
 
 const (
@@ -36,7 +37,7 @@ const (
 
 const (
 	WSOrderBook25L1 = "orderBookL2_25" // 新版25档orderBook: order_book_25L1.BTCUSD
-	WSKLine         = "candle"          // K线: kline.BTCUSD.1m
+	WSKLine         = "candle"         // K线: kline.BTCUSD.1m
 	WSTrade         = "trade"          // 实时交易: trade/trade.BTCUSD
 	WSInsurance     = "insurance"      // 每日保险基金更新: insurance
 	WSInstrument    = "instrument"     // 产品最新行情: instrument
@@ -174,8 +175,9 @@ func (b *ByBitWS) Start() error {
 			messageType, data, err := b.conn.ReadMessage()
 			if err != nil {
 				log.Printf("Read error: %v", err)
-				time.Sleep(100 * time.Millisecond)
-				return
+				//time.Sleep(100 * time.Millisecond)
+				time.Sleep(time.Duration(1000) * time.Millisecond)
+				continue
 			}
 
 			b.processMessage(messageType, data)

@@ -51,7 +51,7 @@ func (b *ByBit) SetCorrectServerTime() (err error) {
 
 // GetBalance Get Wallet Balance
 // coin: BTC,EOS,XRP,ETH,USDT
-func (b *ByBit) GetWalletBalance(coin string) (result Balance, err error) {
+func (b *ByBit) GetWalletBalance(coin string) (result GetBalanceResultData, err error) {
 	var ret GetBalanceResult
 	params := map[string]interface{}{}
 	params["coin"] = coin
@@ -59,18 +59,19 @@ func (b *ByBit) GetWalletBalance(coin string) (result Balance, err error) {
 	if err != nil {
 		return
 	}
-	switch coin {
-	case "BTC":
-		result = ret.Result.BTC
-	case "ETH":
-		result = ret.Result.ETH
-	case "EOS":
-		result = ret.Result.EOS
-	case "XRP":
-		result = ret.Result.XRP
-	case "USDT":
-		result = ret.Result.USDT
-	}
+	// switch coin {
+	// case "BTC":
+	// 	result = ret.Result.BTC
+	// case "ETH":
+	// 	result = ret.Result.ETH
+	// case "EOS":
+	// 	result = ret.Result.EOS
+	// case "XRP":
+	// 	result = ret.Result.XRP
+	// case "USDT":
+	// 	result = ret.Result.USDT
+	// }
+	result = ret.Result
 	return
 }
 
@@ -87,41 +88,42 @@ func (b *ByBit) GetLeverages() (result map[string]LeverageItem, err error) {
 }
 
 // SetLeverage 设置杠杆
-func (b *ByBit) SetLeverage(leverage int, symbol string) (err error) {
+func (b *ByBit) SetLeverage(leverage int, symbol string) (result BaseResult, err error) {
 	var r BaseResult
 	params := map[string]interface{}{}
 	params["symbol"] = symbol
-	params["leverage"] = fmt.Sprintf("%v", leverage)
-	_, err = b.SignedRequest(http.MethodPost, "user/leverage", params, &r)
+	params["buy_leverage"] = fmt.Sprintf("%v", leverage)
+	params["sell_leverage"] = fmt.Sprintf("%v", leverage)
+	_, err = b.SignedRequest(http.MethodPost, "/private/linear/position/set-leverage", params, &r)
 	if err != nil {
-		return
+		return r, err
 	}
 	log.Println(r)
-	return
+	return r, nil
 }
 
 // GetPositions 获取我的仓位
-func (b *ByBit) GetPositions() (result []Position, err error) {
+func (b *ByBit) GetPositions(symbol string) (result []PositionV1, err error) {
 	var r PositionListResult
-
 	params := map[string]interface{}{}
+	params["symbol"] = symbol
 	var resp []byte
-	resp, err = b.SignedRequest(http.MethodGet, "position/list", params, &r)
+	resp, err = b.SignedRequest(http.MethodGet, "/private/linear/position/list", params, &r)
 	if err != nil {
-		return
+		return result, err
 	}
 	if r.RetCode != 0 {
 		err = fmt.Errorf("%v body: [%v]", r.RetMsg, string(resp))
-		return
+		return result, err
 	}
 
 	for _, v := range r.Result {
 		result = append(result, b.convertPositionV1(v))
 	}
-	return
+	return result, nil
 }
 
-func (b *ByBit) convertPositionV1(position PositionV1) (result Position) {
+func (b *ByBit) convertPositionV1(position PositionV1) (result PositionV1) {
 	result.ID = position.ID
 	result.UserID = position.UserID
 	result.RiskID = position.RiskID

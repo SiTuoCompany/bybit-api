@@ -184,20 +184,20 @@ type GetBalanceResult struct {
 }
 
 type GetBalanceResultData struct {
-	BTC  Balance `json:"BTC"`
-	ETH  Balance `json:"ETH"`
-	EOS  Balance `json:"EOS"`
-	XRP  Balance `json:"XRP"`
-	USDT Balance `json:"USDT"`
+	BTC  *Balance `json:"BTC"`
+	ETH  *Balance `json:"ETH"`
+	EOS  *Balance `json:"EOS"`
+	XRP  *Balance `json:"XRP"`
+	USDT *Balance `json:"USDT"`
 }
 
 type CreateOrderResult struct {
-	RetCode         int    `json:"ret_code"`
-	RetMsg          string `json:"ret_msg"`
-	ExtCode         string `json:"ext_code"`
-	Result          Order  `json:"result"`
-	TimeNow         string `json:"time_now"`
-	RateLimitStatus int    `json:"rate_limit_status"`
+	RetCode         int      `json:"ret_code"`
+	RetMsg          string   `json:"ret_msg"`
+	ExtCode         string   `json:"ext_code"`
+	Result          *OrderV1 `json:"result"`
+	TimeNow         string   `json:"time_now"`
+	RateLimitStatus int      `json:"rate_limit_status"`
 }
 
 type OrderLite struct {
@@ -213,11 +213,24 @@ type ReplaceOrderResult struct {
 	RateLimitStatus int       `json:"rate_limit_status"`
 }
 
+type CancelStopOrder struct {
+	StopOrderID string `json:"stop_order_id"`
+}
+
+type CancelStopOrderResult struct {
+	RetCode         int             `json:"ret_code"`
+	RetMsg          string          `json:"ret_msg"`
+	ExtCode         string          `json:"ext_code"`
+	Result          CancelStopOrder `json:"result"`
+	TimeNow         string          `json:"time_now"`
+	RateLimitStatus int             `json:"rate_limit_status"`
+}
+
 type CancelOrderResult struct {
 	RetCode         int    `json:"ret_code"`
 	RetMsg          string `json:"ret_msg"`
 	ExtCode         string `json:"ext_code"`
-	Result          Order  `json:"result"`
+	Result          string `json:"result"`
 	TimeNow         string `json:"time_now"`
 	RateLimitStatus int    `json:"rate_limit_status"`
 }
@@ -239,8 +252,8 @@ type OrderListResult struct {
 
 // Order ...
 type Order struct {
-	OrderID string `json:"order_id"`
-	StopOrderID     string       `json:"stop_order_id"`
+	OrderID     string  `json:"order_id"`
+	StopOrderID string  `json:"stop_order_id"`
 	UserID      int     `json:"user_id"`
 	Symbol      string  `json:"symbol"`
 	Side        string  `json:"side"`
@@ -405,6 +418,41 @@ type GetPositionResult struct {
 	Result  Position    `json:"result"`
 }
 
+type OrderV1 struct {
+	UserID         int          `json:"user_id"`
+	OrderID        string       `json:"order_id"`
+	Symbol         string       `json:"symbol"`
+	Side           string       `json:"side"`
+	OrderType      string       `json:"order_type"`
+	Price          sjson.Number `json:"price"`
+	Qty            float64      `json:"qty"`
+	TimeInForce    string       `json:"time_in_force"`
+	OrderStatus    string       `json:"order_status"`
+	LastExecPrice  sjson.Number `json:"last_exec_price"`
+	CumExecQty     float64      `json:"cum_exec_qty"`
+	CumExecValue   sjson.Number `json:"cum_exec_value"`
+	CumExecFee     sjson.Number `json:"cum_exec_fee"`
+	ReduceOnly     bool         `json:"reduce_only"`
+	CloseOnTrigger bool         `json:"close_on_trigger"`
+	OrderLinkID    string       `json:"order_link_id"`
+	CreatedTime    time.Time    `json:"created_time"`
+	UpdatedTime    time.Time    `json:"updated_time"`
+	// LastExecTime  sjson.Number `json:"last_exec_time"`
+	// LeavesQty     float64      `json:"leaves_qty"`
+	// RejectReason  string       `json:"reject_reason"`
+}
+
+type CreateOrderV1Result struct {
+	RetCode          int      `json:"ret_code"`
+	RetMsg           string   `json:"ret_msg"`
+	ExtCode          string   `json:"ext_code"`
+	ExtInfo          string   `json:"ext_info"`
+	Result           *OrderV1 `json:"result"`
+	TimeNow          string   `json:"time_now"`
+	RateLimitStatus  int      `json:"rate_limit_status"`
+	RateLimitResetMs int64    `json:"rate_limit_reset_ms"`
+	RateLimit        int      `json:"rate_limit"`
+}
 type OrderV2 struct {
 	UserID        int          `json:"user_id"`
 	OrderID       string       `json:"order_id"`
@@ -464,15 +512,15 @@ type CancelAllOrderV2Result struct {
 }
 
 type QueryOrderResult struct {
-	RetCode          int     `json:"ret_code"`
-	RetMsg           string  `json:"ret_msg"`
-	ExtCode          string  `json:"ext_code"`
-	ExtInfo          string  `json:"ext_info"`
-	Result           OrderV2 `json:"result"`
-	TimeNow          string  `json:"time_now"`
-	RateLimitStatus  int     `json:"rate_limit_status"`
-	RateLimitResetMs int64   `json:"rate_limit_reset_ms"`
-	RateLimit        int     `json:"rate_limit"`
+	RetCode          int        `json:"ret_code"`
+	RetMsg           string     `json:"ret_msg"`
+	ExtCode          string     `json:"ext_code"`
+	ExtInfo          string     `json:"ext_info"`
+	Result           []*OrderV1 `json:"result"`
+	TimeNow          string     `json:"time_now"`
+	RateLimitStatus  int        `json:"rate_limit_status"`
+	RateLimitResetMs int64      `json:"rate_limit_reset_ms"`
+	RateLimit        int        `json:"rate_limit"`
 }
 
 type StopOrderV2 struct {
@@ -511,23 +559,46 @@ type CancelStopOrdersV2Result struct {
 	RateLimit        int           `json:"rate_limit"`
 }
 
+type CancelStopOrdersV1Result struct {
+	RetCode          int      `json:"ret_code"`
+	RetMsg           string   `json:"ret_msg"`
+	ExtCode          string   `json:"ext_code"`
+	ExtInfo          string   `json:"ext_info"`
+	Result           []string `json:"result"`
+	TimeNow          string   `json:"time_now"`
+	RateLimitStatus  int      `json:"rate_limit_status"`
+	RateLimitResetMs int64    `json:"rate_limit_reset_ms"`
+	RateLimit        int      `json:"rate_limit"`
+}
+
+type CreateStopOrdersResult struct {
+	RetCode          int         `json:"ret_code"`
+	RetMsg           string      `json:"ret_msg"`
+	ExtCode          string      `json:"ext_code"`
+	Result           *StopOrder  `json:"result"`
+	ExtInfo          interface{} `json:"ext_info"`
+	TimeNow          string      `json:"time_now"`
+	RateLimitStatus  int         `json:"rate_limit_status"`
+	RateLimitResetMs int64       `json:"rate_limit_reset_ms"`
+	RateLimit        int         `json:"rate_limit"`
+}
+
 type StopOrder struct {
-	UserID          int64     `json:"user_id"`
-	StopOrderStatus string    `json:"stop_order_status"`
-	Symbol          string    `json:"symbol"`
-	Side            string    `json:"side"`
-	OrderType       string    `json:"order_type"`
-	Price           float64   `json:"price"`
-	Qty             float64   `json:"qty"`
-	TimeInForce     string    `json:"time_in_force"`
-	StopOrderType   string    `json:"stop_order_type"`
-	TriggerBy       string    `json:"trigger_by"`
-	BasePrice       float64   `json:"base_price"`
-	OrderLinkID     string    `json:"order_link_id"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	StopPx          float64   `json:"stop_px"`
-	StopOrderID     string    `json:"stop_order_id"`
+	UserID      int64     `json:"user_id"`
+	OrderStatus string    `json:"order_status"`
+	Symbol      string    `json:"symbol"`
+	Side        string    `json:"side"`
+	OrderType   string    `json:"order_type"`
+	Price       float64   `json:"price"`
+	Qty         float64   `json:"qty"`
+	TimeInForce string    `json:"time_in_force"`
+	TriggerBy   string    `json:"trigger_by"`
+	BasePrice   string    `json:"base_price"`
+	OrderLinkID string    `json:"order_link_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	StopPx      float64   `json:"stop_px"`
+	StopOrderID string    `json:"stop_order_id"`
 }
 
 type GetStopOrdersResultData struct {
@@ -537,13 +608,13 @@ type GetStopOrdersResultData struct {
 }
 
 type GetStopOrdersResult struct {
-	RetCode          int                     `json:"ret_code"`
-	RetMsg           string                  `json:"ret_msg"`
-	ExtCode          string                  `json:"ext_code"`
-	Result           GetStopOrdersResultData `json:"result"`
-	ExtInfo          interface{}             `json:"ext_info"`
-	TimeNow          string                  `json:"time_now"`
-	RateLimitStatus  int                     `json:"rate_limit_status"`
-	RateLimitResetMs int64                   `json:"rate_limit_reset_ms"`
-	RateLimit        int                     `json:"rate_limit"`
+	RetCode          int         `json:"ret_code"`
+	RetMsg           string      `json:"ret_msg"`
+	ExtCode          string      `json:"ext_code"`
+	Result           []StopOrder `json:"result"`
+	ExtInfo          interface{} `json:"ext_info"`
+	TimeNow          string      `json:"time_now"`
+	RateLimitStatus  int         `json:"rate_limit_status"`
+	RateLimitResetMs int64       `json:"rate_limit_reset_ms"`
+	RateLimit        int         `json:"rate_limit"`
 }

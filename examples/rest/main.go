@@ -1,18 +1,19 @@
 package main
 
 import (
-	"github.com/frankrap/bybit-api/rest"
 	"log"
+
+	"github.com/frankrap/bybit-api/rest"
 )
 
 func main() {
 	//baseURL := "https://api.bybit.com/"	// 主网络
 	baseURL := "https://api-testnet.bybit.com/" // 测试网络
 	b := rest.New(nil,
-		baseURL, "YIxOY2RhFkylPudq96", "Bg9G2oFOb3aaIMguD3FOvOJJVBycaoXqXNcI")
+		baseURL, "YIxOY2RhFkylPudq96", "Bg9G2oFOb3aaIMguD3FOvOJJVBycaoXqXNcI", false)
 
 	// 获取持仓
-	positions, err := b.GetPositions()
+	positions, err := b.GetPositions("BTCUSDT")
 	if err != nil {
 		log.Printf("%v", err)
 		return
